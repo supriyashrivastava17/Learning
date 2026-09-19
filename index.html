@@ -115,18 +115,15 @@
      "Where Smart Technology / Meets a Sustainable / Future" */
   .hero h1{margin:1.15rem 0 0;line-height:1.24;max-width:min(830px,94%)}
   .hero .lede{margin-top:clamp(2rem,5.5vw,4.5rem);max-width:380px;font-size:1.02rem;line-height:1.75}
+  /* Anchored bottom-right and sized so the whole frame fits inside the hero —
+     nothing is clipped. The file's left third is empty ground, which is why
+     the width looks large: the branch itself occupies the right two thirds. */
   .hero-photo{
-    position:absolute;z-index:1;right:0;bottom:-8%;
-    width:clamp(300px,46%,660px);height:auto;
+    position:absolute;z-index:1;right:0;bottom:0;
+    width:clamp(340px,64%,940px);height:auto;
     pointer-events:none;user-select:none;
-    /* The photograph is a dark subject on a white field. Multiplying drops
-       that white into the page colour, so there is no rectangle edge on any
-       background. Swap in a white-backed export and this needs no changes. */
-    mix-blend-mode:multiply;
-    /* INTERIM: the current file is cropped from a screenshot, so its ground
-       is #e3e4e5 rather than white. This lifts it to white so multiply has
-       nothing to darken. Delete this line once the real export is in place. */
-    filter:brightness(1.13) contrast(1.05);
+    /* The file is a transparent cutout, so it composites onto the page with
+       no blend mode and no edge. */
   }
   .textlink{
     display:inline-flex;align-items:center;gap:.6rem;margin-top:2.25rem;
@@ -230,9 +227,10 @@
   /* ---------- responsive ---------- */
   @media (max-width:1000px){
     .sec-head,.svc-head,.svc-body,.val-head,.foot-grid{grid-template-columns:1fr}
-    /* Photo stops being a bleed and becomes a block under the copy. */
+    /* Photo stops being a bleed and becomes a block under the copy. Shown
+       whole — no clipping — so the branch is never cut at an edge. */
     .hero{min-height:0;overflow:visible}
-    .hero-photo{position:static;width:100%;max-width:520px;margin:2.5rem auto 0;display:block}
+    .hero-photo{position:static;width:100%;max-width:none;margin:1.5rem 0 0;display:block}
     .hero h1,.hero .lede{max-width:none}
     .hero .lede{margin-top:1.75rem}
     .svc-art{aspect-ratio:16/9;max-height:260px}
@@ -316,7 +314,7 @@
     </div>
     <!-- After the copy in source order so it lands below it on small screens;
          on desktop it is absolutely positioned, so order does not matter. -->
-    <img class="hero-photo" src="assets/hero-leaf.jpg" width="617" height="648"
+    <img class="hero-photo" src="assets/hero-leaf.png" width="1032" height="798"
          alt="Monochrome photograph of a leafed branch">
   </section>
   <div class="shell"><hr class="rule"></div>
