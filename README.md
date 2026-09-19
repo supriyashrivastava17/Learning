@@ -30,11 +30,15 @@ Nav → Hero → Results → Our Services → Our Values → Footer.
   (`Technology`, `Future`, `Improve`, `Air`, `Efficiency`, `Principles`).
   That sans/serif contrast is the design's signature.
 - The page background carries an SVG grain texture to match the Figma paper.
-- **Imagery is hand-authored SVG, not the Figma exports.** The design's
-  photographs (leaf branch, energy column, four landscapes, footer figure)
-  could not be exported — the file was only reachable signed out, so Dev Mode
-  and asset export were unavailable. The SVGs are deliberate stand-ins and
-  should be swapped for the real assets.
+- The hero photograph is a real image; the remaining imagery (energy column,
+  four landscape cards, footer figure) is still hand-authored SVG, because the
+  Figma file was only reachable signed out and its assets could not be exported.
+- `assets/hero-leaf.jpg` is cropped from a screenshot, so its ground is grey
+  rather than white. It is composited with `mix-blend-mode: multiply`, which
+  drops that ground into the page colour so there is no rectangle edge. A
+  temporary `filter: brightness(...)` lifts the grey to white; **delete that
+  filter line in `.hero-photo` once a white-backed export replaces the file.**
+  The blend needs no other changes.
 - Colours and spacing are read from the canvas by eye, not from Dev Mode, so
   they are close but not token-exact.
 - Copy is transcribed from the design, including its own placeholder text

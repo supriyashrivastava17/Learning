@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400;1,500&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#e8e8e4;
+    /* Sampled from the hero photograph so it sits on the page seamlessly. */
+    --bg:#e3e4e5;
     --bg-deep:#dedeD9;
     --ink:#15171a;
     --muted:#5e6468;
@@ -35,11 +36,14 @@
     overflow-x:hidden;
   }
 
-  /* Paper grain that sits over the whole page, like the Figma texture */
+  /* Paper grain, like the Figma texture. It has to sit ABOVE the content:
+     the hero photograph carries its own grain, so if the texture only
+     covered the page background the photo would read as a clean rectangle
+     pasted onto a noisy field. */
   body::before{
     content:"";
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    opacity:.5; mix-blend-mode:multiply;
+    position:fixed; inset:0; z-index:9999; pointer-events:none;
+    opacity:.22; mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E");
   }
   main,header,footer{position:relative;z-index:1}
@@ -69,46 +73,68 @@
   .lede{color:var(--muted);font-size:.95rem;max-width:46ch}
 
   /* ---------- nav ---------- */
-  .nav-wrap{position:sticky;top:18px;z-index:50;padding-top:18px}
+  .nav-wrap{position:sticky;top:16px;z-index:50;padding-top:22px}
   .nav{
-    display:flex;align-items:center;gap:1.5rem;
+    max-width:880px;margin-inline:auto;
+    display:flex;align-items:center;gap:1.25rem;
     background:var(--card);border-radius:999px;
-    padding:.6rem .6rem .6rem 1.4rem;
-    box-shadow:0 1px 2px rgba(0,0,0,.05),0 12px 30px -18px rgba(0,0,0,.35);
+    padding:.5rem .7rem .5rem 1.15rem;
+    box-shadow:0 1px 2px rgba(0,0,0,.05),0 12px 30px -20px rgba(0,0,0,.3);
   }
-  .brand{display:flex;align-items:center;gap:.55rem;font-weight:600;font-size:.95rem;letter-spacing:-.01em}
+  .brand{display:flex;flex-direction:column;align-items:center;gap:1px;text-decoration:none;color:inherit;flex:none}
   .brand svg{display:block}
-  .nav-links{display:flex;align-items:center;gap:2rem;margin-inline:auto;font-size:.9rem}
-  .nav-links a{color:var(--ink);text-decoration:none;font-weight:500;display:inline-flex;align-items:center;gap:.3rem}
+  .brand span{font-size:.5rem;font-weight:600;letter-spacing:.07em;color:var(--ink)}
+  .nav-links{display:flex;align-items:center;gap:2.1rem;margin-inline:auto;font-size:.92rem}
+  .nav-links a{color:var(--ink);text-decoration:none;font-weight:500;display:inline-flex;align-items:center;gap:.35rem}
   .nav-links a:hover{color:var(--muted)}
-  .btn{
-    display:inline-flex;align-items:center;gap:.5rem;
-    border:0;cursor:pointer;font:inherit;font-weight:500;font-size:.875rem;
-    padding:.7rem 1.1rem;border-radius:999px;
-    background:var(--ink);color:#fff;text-decoration:none;
-    transition:transform .15s ease,background .15s ease;
+  .talk{
+    display:inline-flex;align-items:center;gap:.7rem;flex:none;
+    font-weight:500;font-size:.92rem;color:var(--ink);text-decoration:none;
   }
-  .btn:hover{transform:translateY(-1px)}
-  .btn .chip{
-    width:20px;height:20px;border-radius:5px;background:var(--green);
+  .talk .chip{
+    width:30px;height:30px;border-radius:7px;background:var(--green);
     display:grid;place-items:center;color:var(--ink);flex:none;
+    transition:background .15s ease;
   }
+  .talk:hover .chip{background:var(--green-deep)}
   .nav-toggle{display:none;background:none;border:0;padding:.55rem;cursor:pointer}
 
   /* ---------- hero ---------- */
-  .hero{padding:clamp(3rem,7vw,5.5rem) 0 clamp(2.5rem,5vw,4rem);position:relative}
-  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:2rem;align-items:center}
-  .hero h1{margin:1.25rem 0 0}
-  .hero .lede{margin-top:1.5rem}
+  /* Full-bleed: the photograph runs off the right edge and past the fold,
+     with the headline sitting in front of it. */
+  .hero{
+    position:relative;overflow:hidden;
+    min-height:clamp(540px,58vw,860px);
+    padding:clamp(2.5rem,5vw,4.5rem) 0 clamp(2.5rem,5vw,4rem);
+    /* Explicit backdrop so .hero-photo's multiply blend has something to
+       blend against — `main` creates its own stacking context. */
+    background:var(--bg);
+  }
+  .hero-inner{position:relative;z-index:2}
+  /* max-width is tuned so the headline breaks as the design does:
+     "Where Smart Technology / Meets a Sustainable / Future" */
+  .hero h1{margin:1.15rem 0 0;line-height:1.24;max-width:min(830px,94%)}
+  .hero .lede{margin-top:clamp(2rem,5.5vw,4.5rem);max-width:380px;font-size:1.02rem;line-height:1.75}
+  .hero-photo{
+    position:absolute;z-index:1;right:0;bottom:-8%;
+    width:clamp(300px,46%,660px);height:auto;
+    pointer-events:none;user-select:none;
+    /* The photograph is a dark subject on a white field. Multiplying drops
+       that white into the page colour, so there is no rectangle edge on any
+       background. Swap in a white-backed export and this needs no changes. */
+    mix-blend-mode:multiply;
+    /* INTERIM: the current file is cropped from a screenshot, so its ground
+       is #e3e4e5 rather than white. This lifts it to white so multiply has
+       nothing to darken. Delete this line once the real export is in place. */
+    filter:brightness(1.13) contrast(1.05);
+  }
   .textlink{
-    display:inline-flex;align-items:center;gap:.6rem;margin-top:1.75rem;
+    display:inline-flex;align-items:center;gap:.6rem;margin-top:2.25rem;
     font-size:.875rem;font-weight:500;color:var(--ink);text-decoration:none;
   }
-  .textlink .chip{width:22px;height:22px;border-radius:6px;background:var(--green);display:grid;place-items:center;flex:none}
+  .textlink .chip{width:26px;height:26px;border-radius:6px;background:var(--green);display:grid;place-items:center;flex:none}
   .textlink:hover .chip{background:var(--green-deep)}
-  .hero-art{justify-self:end;width:100%;max-width:560px}
-  .hero-art svg{width:100%;height:auto;display:block}
-  .rule{height:1px;background:var(--line);border:0;margin:clamp(2rem,4vw,3rem) 0 0}
+  .rule{height:1px;background:var(--line);border:0;margin:0}
 
   /* ---------- results ---------- */
   .section{padding:clamp(3rem,6vw,5rem) 0}
@@ -203,8 +229,12 @@
 
   /* ---------- responsive ---------- */
   @media (max-width:1000px){
-    .hero-grid,.sec-head,.svc-head,.svc-body,.val-head,.foot-grid{grid-template-columns:1fr}
-    .hero-art{justify-self:center;max-width:460px}
+    .sec-head,.svc-head,.svc-body,.val-head,.foot-grid{grid-template-columns:1fr}
+    /* Photo stops being a bleed and becomes a block under the copy. */
+    .hero{min-height:0;overflow:visible}
+    .hero-photo{position:static;width:100%;max-width:520px;margin:2.5rem auto 0;display:block}
+    .hero h1,.hero .lede{max-width:none}
+    .hero .lede{margin-top:1.75rem}
     .svc-art{aspect-ratio:16/9;max-height:260px}
     .foot-art{aspect-ratio:16/9}
     .carousel-btns{justify-content:flex-start}
@@ -236,13 +266,16 @@
 
 <div class="shell nav-wrap">
   <nav class="nav">
-    <a class="brand" href="#top" style="text-decoration:none;color:inherit">
-      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
-        <circle cx="13" cy="13" r="13" fill="#15171a"/>
-        <path d="M13 19.5c-3.6 0-5.8-2.2-5.8-5.8 0-4.3 2.9-7.2 11.6-7.2 0 8.7-2.9 11.6-5.8 11.6z" fill="#86ee9b"/>
-        <path d="M18.8 6.5C14 11.3 11.6 14.7 10.4 19.4" stroke="#15171a" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <a class="brand" href="#top">
+      <svg width="40" height="28" viewBox="0 0 40 28" aria-hidden="true">
+        <path d="M11.4 16.2a5.2 5.2 0 01.7-10.3c.5 0 1 .07 1.5.2A7 7 0 0126.9 8a4.6 4.6 0 01.9 9.1H12.2a5 5 0 01-.8-.9z" fill="#2f7fbf"/>
+        <path d="M17.6 12.4a4.3 4.3 0 01.6-8.5c.4 0 .8.05 1.2.16A5.8 5.8 0 0130 5.6a3.8 3.8 0 01.8 7.5H18.3a4 4 0 01-.7-.7z" fill="#6cb7e0"/>
+        <g stroke="#2f7fbf" stroke-width="1.6" stroke-linecap="round">
+          <path d="M14 20.5l-1.2 3"/><path d="M19 20.5l-1.2 3"/>
+          <path d="M24 20.5l-1.2 3"/><path d="M29 20.5l-1.2 3"/>
+        </g>
       </svg>
-      Living Things
+      <span>LIVING THINGS</span>
     </a>
 
     <div class="nav-links" id="navLinks">
@@ -259,9 +292,9 @@
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
 
-    <a class="btn" href="#contact">Talk to us
+    <a class="talk" href="#contact">Talk to us
       <span class="chip">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
       </span>
     </a>
   </nav>
@@ -270,78 +303,24 @@
 <main id="top">
 
   <!-- ============ hero ============ -->
-  <section class="hero shell">
-    <div class="hero-grid">
-      <div>
-        <span class="eyebrow">IoT-Powered Sustainability Platform</span>
-        <h1>Where Smart <span class="serif">Technology</span> Meets a Sustainable <span class="serif">Future</span></h1>
-        <p class="lede">We design, deploy, and optimize IoT-driven energy systems that cut carbon, boost efficiency, and accelerate the journey to net zero.</p>
-        <a class="textlink" href="#results">Discover more
-          <span class="chip">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
-          </span>
-        </a>
-      </div>
-
-      <div class="hero-art">
-        <!-- Botanical stand-in for the Figma photograph -->
-        <svg viewBox="0 0 560 420" role="img" aria-label="Monochrome botanical branch">
-          <defs>
-            <linearGradient id="leafA" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#6d6f70"/><stop offset=".55" stop-color="#3a3c3e"/><stop offset="1" stop-color="#17191b"/>
-            </linearGradient>
-            <linearGradient id="leafB" x1="1" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#8b8d8e"/><stop offset=".6" stop-color="#4a4c4e"/><stop offset="1" stop-color="#232527"/>
-            </linearGradient>
-            <g id="veins">
-              <path d="M0 0 C 24 -14 52 -22 84 -24" /><path d="M0 0 C 22 -4 48 -6 76 -4"/>
-              <path d="M0 0 C 20 6 44 14 68 22"/><path d="M0 0 C 16 16 34 32 50 46"/>
-              <path d="M0 0 C -22 -14 -50 -22 -82 -24"/><path d="M0 0 C -22 -4 -46 -6 -74 -4"/>
-              <path d="M0 0 C -20 6 -42 14 -66 22"/><path d="M0 0 C -16 16 -32 32 -48 46"/>
-            </g>
-          </defs>
-
-          <!-- stem -->
-          <path d="M540 404 C 470 372 404 330 352 276 C 300 222 258 164 214 116"
-                stroke="#2a2c2e" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-          <path d="M352 276 C 324 258 296 250 268 250" stroke="#2a2c2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M280 186 C 314 178 348 182 378 196" stroke="#2a2c2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-
-          <!-- big upper-left leaf -->
-          <g transform="translate(150 104) rotate(-16)">
-            <ellipse rx="128" ry="82" fill="url(#leafA)"/>
-            <path d="M-128 0 H128" stroke="#0e1011" stroke-width="2.4" opacity=".85"/>
-            <g stroke="#0d0f10" stroke-width="1.15" fill="none" opacity=".5"><use href="#veins"/></g>
-            <ellipse rx="128" ry="82" fill="none" stroke="#0d0f10" stroke-width="1.6" opacity=".55"/>
-          </g>
-
-          <!-- right leaf -->
-          <g transform="translate(424 214) rotate(22)">
-            <ellipse rx="112" ry="70" fill="url(#leafB)"/>
-            <path d="M-112 0 H112" stroke="#0e1011" stroke-width="2.2" opacity=".85"/>
-            <g stroke="#0d0f10" stroke-width="1.05" fill="none" opacity=".45"><use href="#veins"/></g>
-            <ellipse rx="112" ry="70" fill="none" stroke="#0d0f10" stroke-width="1.5" opacity=".5"/>
-          </g>
-
-          <!-- lower-left leaf -->
-          <g transform="translate(208 286) rotate(-38)">
-            <ellipse rx="92" ry="58" fill="url(#leafA)"/>
-            <path d="M-92 0 H92" stroke="#0e1011" stroke-width="2" opacity=".85"/>
-            <g stroke="#0d0f10" stroke-width="1" fill="none" opacity=".45"><use href="#veins"/></g>
-            <ellipse rx="92" ry="58" fill="none" stroke="#0d0f10" stroke-width="1.4" opacity=".5"/>
-          </g>
-
-          <!-- small top sprig -->
-          <g transform="translate(318 74) rotate(8)">
-            <ellipse rx="62" ry="38" fill="url(#leafB)"/>
-            <path d="M-62 0 H62" stroke="#0e1011" stroke-width="1.7" opacity=".8"/>
-            <ellipse rx="62" ry="38" fill="none" stroke="#0d0f10" stroke-width="1.2" opacity=".45"/>
-          </g>
-        </svg>
-      </div>
+  <section class="hero">
+    <div class="shell hero-inner">
+      <span class="eyebrow">IoT-Powered Sustainability Platform</span>
+      <h1>Where Smart <span class="serif">Technology</span> Meets a Sustainable <span class="serif">Future</span></h1>
+      <p class="lede">We design, deploy, and optimize IoT-driven energy systems that cut carbon, boost efficiency, and accelerate the journey to net zero.</p>
+      <a class="textlink" href="#results">Discover more
+        <span class="chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </span>
+      </a>
     </div>
-    <hr class="rule">
+    <!-- After the copy in source order so it lands below it on small screens;
+         on desktop it is absolutely positioned, so order does not matter. -->
+    <img class="hero-photo" src="assets/hero-leaf.jpg" width="617" height="648"
+         alt="Monochrome photograph of a leafed branch">
   </section>
+  <div class="shell"><hr class="rule"></div>
+
 
   <!-- ============ results ============ -->
   <section class="section shell" id="results">

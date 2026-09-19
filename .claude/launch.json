@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "learning",
-      "runtimeExecutable": "ruby",
-      "runtimeArgs": ["-run", "-e", "httpd", "--", "-p", "4322", "."],
-      "port": 4322
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "python3 -m http.server ${PORT:-4322} --bind 127.0.0.1"],
+      "port": 4322,
+      "autoPort": true
     }
   ]
 }
